@@ -15,8 +15,11 @@ export interface VirtualHypixelConfig {
     },
 
     modules: {
-        [key: string]: {
-            [key: string]: any
+        path: string,
+        configs: {
+            [key: string]: {
+                [key: string]: any
+            }
         }
     }
 }
