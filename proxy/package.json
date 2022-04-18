@@ -2,11 +2,20 @@
   "name": "virtual-hypixel-v8-proxy",
   "version": "1.0.0",
   "description": "Virtual Hypixel is a local proxy to mc.hypixel.net that adds features to your game by modifying / adding / removing packets!",
-  "keywords": ["minecraft", "proxy", "packets", "client", "server"],
+  "keywords": [
+    "minecraft",
+    "proxy",
+    "packets",
+    "client",
+    "server"
+  ],
   "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "HumanDuck23",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "prismarine-proxy": "^1.1.2"
+  }
 }
