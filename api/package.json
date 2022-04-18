@@ -2,7 +2,7 @@
   "name": "virtual-hypixel-v8-api",
   "version": "1.0.0",
   "description": "API for virtual hypixel",
-  "main": "index.js",
+  "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
