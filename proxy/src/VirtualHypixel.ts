@@ -1,6 +1,7 @@
 import { VirtualHypixelConfig } from "./interfaces/VirtualHypixelConfig"
 import { InstantConnectProxy } from "prismarine-proxy"
 import { Client, PacketMeta } from "minecraft-protocol"
+import { Logger } from "./utils/Logger"
 
 export class VirtualHypixel {
 
@@ -11,12 +12,11 @@ export class VirtualHypixel {
     packetsStarted: boolean = false
 
     start(config: VirtualHypixelConfig) {
+        Logger.startup(`Starting VirtualHypixel ${this.version}...`)
         this.config = config
 
         this.proxy = new InstantConnectProxy({
             loginHandler: ((client: Client) => {
-
-
                 let credentials = null
                 if (this.config?.accounts) {
                     for (const account in this.config.accounts) {
@@ -28,12 +28,14 @@ export class VirtualHypixel {
                 }
 
                 if (credentials) {
+                    Logger.info(`Logging in ${client.username}...`)
                     return {
                         username: credentials.email,
                         password: credentials.password,
                         auth: "microsoft"
                     }
                 } else {
+                    Logger.error(`No credentials found for ${client.username}!`)
                     return { username: client.username, password: "", auth: "mojang" }
                 }
             }),
@@ -59,12 +61,15 @@ export class VirtualHypixel {
         this.proxy.on("outgoing", (data, meta, toClient, toServer) => {
             toServer.write(meta.name, data)
         })
+
+        Logger.startup(`VirtualHypixel ${this.version} started! You can now connect to "localhost:${this.config.server.port}".`)
     }
 
     stop() {
         if (this.proxy) {
             this.proxy.server?.close()
             this.proxy = null
+            Logger.info(`Stopped VirtualHypixel ${this.version}.`)
         }
     }
 
