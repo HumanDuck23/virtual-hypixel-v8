@@ -12,6 +12,7 @@ export class VirtualHypixel {
     config: VirtualHypixelConfig | null = null
 
     proxy: InstantConnectProxy | null = null
+    client: Client | null = null
     packetsStarted: boolean = false
 
     modules: Module[] = []
@@ -22,6 +23,17 @@ export class VirtualHypixel {
 
         this.proxy = new InstantConnectProxy({
             loginHandler: ((client: Client) => {
+                this.client = client
+
+                this.client.on("end", () => {
+                    this.packetsStarted = false
+                    for (const module of this.modules) {
+                        if (module.instance.onDisconnect !== undefined && typeof module.instance.onDisconnect === "function") {
+                            module.instance.onDisconnect()
+                        }
+                    }
+                })
+
                 let credentials = null
                 if (this.config?.accounts) {
                     for (const account in this.config.accounts) {
@@ -57,14 +69,33 @@ export class VirtualHypixel {
             }
         })
 
-        //@ts-ignore
+        // @ts-ignore
         this.proxy.on("incoming", (data, meta, toClient, toServer) => {
-            toClient.write(meta.name, data)
+            try {
+                if (!this.packetsStarted) {
+                    this.packetsStarted = true
+                    for (const module of this.modules) {
+                        if (module.instance.onConnect !== undefined && typeof module.instance.onConnect === "function") {
+                            module.instance.onConnect()
+                        }
+                    }
+                }
+
+                const handled = this.handlePacket(meta, data, toServer, false)
+                if (!handled.intercept) toClient.write(handled.meta.name, handled.data)
+            } catch (e) {
+                Logger.error(`Error while writing to client: ${e}`)
+            }
         })
 
-        //@ts-ignore
+        // @ts-ignore
         this.proxy.on("outgoing", (data, meta, toClient, toServer) => {
-            toServer.write(meta.name, data)
+            try {
+                const handled = this.handlePacket(meta, data, toServer, true)
+                if (!handled.intercept) toServer.write(handled.meta.name, handled.data)
+            } catch (e) {
+                Logger.error(`Error while writing to server: ${e}`)
+            }
         })
 
         Logger.startup(`VirtualHypixel ${this.version} started! You can now connect to "localhost:${this.config.server.port}".`)
@@ -107,6 +138,35 @@ export class VirtualHypixel {
         } else {
             Logger.error(`No config found!`)
         }
+    }
+
+    handlePacket(meta: PacketMeta, data: any, toServer: Client, out: boolean): { intercept: boolean, meta: PacketMeta, data: any } {
+        let intercept = false
+
+        for (const module of this.modules) {
+            let applied = [false, data]
+            if (out) {
+                if (module.instance.onOutPacket !== undefined && typeof module.instance.onOutPacket === "function") {
+                    applied = module.instance.onOutPacket(meta, data, toServer, this.client)
+                    if (applied[0]) {
+                        intercept = true
+                    } else {
+                        data = applied[1]
+                    }
+                }
+            } else {
+                if (module.instance.onInPacket !== undefined && typeof module.instance.onInPacket === "function") {
+                    applied = module.instance.onInPacket(meta, data, toServer, this.client)
+                    if (applied[0]) {
+                        intercept = true
+                    } else {
+                        data = applied[1]
+                    }
+                }
+            }
+        }
+
+        return { intercept, meta, data }
     }
 
 }
