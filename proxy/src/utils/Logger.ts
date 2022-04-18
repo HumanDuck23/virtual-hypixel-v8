@@ -16,7 +16,7 @@ export class Logger {
      * @param message
      */
     static info(message: string) {
-        const t = chalk.hex(this.infoColor)(`[${new Date().toISOString().split("T")[1]}] info | ${chalk.white(message)}`)
+        const t = chalk.hex(this.infoColor)(`[${new Date().toISOString().split("T")[1]}] info || ${chalk.white(message)}`)
         console.log(chalk.bold(t))
     }
 
@@ -25,7 +25,7 @@ export class Logger {
      * @param message
      */
     static warn(message: string) {
-        const t = chalk.hex(this.warnColor)(`[${new Date().toISOString().split("T")[1]}] warn | ${chalk.white(message)}`)
+        const t = chalk.hex(this.warnColor)(`[${new Date().toISOString().split("T")[1]}] warn || ${chalk.white(message)}`)
         console.log(chalk.bold(t))
     }
 
@@ -35,7 +35,7 @@ export class Logger {
      * @param message
      */
     static error(message: string) {
-        const t = chalk.hex(this.errorColor)(`[${new Date().toISOString().split("T")[1]}]error | ${chalk.white(message)}`)
+        const t = chalk.hex(this.errorColor)(`[${new Date().toISOString().split("T")[1]}] error || ${chalk.white(message)}`)
         console.log(chalk.bold(t))
     }
 
@@ -44,7 +44,7 @@ export class Logger {
      * @param message
      */
     static debug(message: string) {
-        const t = chalk.hex(this.debugColor)(`[${new Date().toISOString().split("T")[1]}]debug | ${chalk.white(message)}`)
+        const t = chalk.hex(this.debugColor)(`[${new Date().toISOString().split("T")[1]}] debug || ${chalk.white(message)}`)
         console.log(chalk.bold(t))
     }
 
@@ -53,7 +53,7 @@ export class Logger {
      * @param message
      */
     static startup(message: string) {
-        const t = chalk.hex(this.startupColor)(`[${new Date().toISOString().split("T")[1]}]startup | ${chalk.white(message)}`)
+        const t = chalk.hex(this.startupColor)(`[${new Date().toISOString().split("T")[1]}] startup || ${chalk.white(message)}`)
         console.log(chalk.bold(t))
     }
 
