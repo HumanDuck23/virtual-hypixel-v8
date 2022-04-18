@@ -34,18 +34,15 @@ export class VirtualHypixel {
                         auth: "microsoft"
                     }
                 } else {
-                    return {
-                        username: "",
-                        password: "",
-                        auth: "mojang"
-                    }
+                    return { username: client.username, password: "", auth: "mojang" }
                 }
             }),
             serverOptions: {
                 motd: this.config.server.motd,
                 maxPlayers: this.config.server.maxPlayers,
                 port: this.config.server.port,
-                favicon: this.config.server.favicon
+                favicon: this.config.server.favicon,
+                version: "1.8.9"
             },
             clientOptions: {
                 version: "1.8.9",
