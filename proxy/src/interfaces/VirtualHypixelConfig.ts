@@ -3,11 +3,15 @@ export interface VirtualHypixelConfig {
         motd: string,
         maxPlayers: number,
         port: number,
-        target: string
+        target: string,
+        favicon: string
     },
 
     accounts: {
-            [key: string]: string
+        [key: string]: {
+            email: string,
+            password: string
+        }
     },
 
     modules: {
