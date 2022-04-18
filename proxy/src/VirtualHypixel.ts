@@ -1,7 +1,10 @@
 import { VirtualHypixelConfig } from "./interfaces/VirtualHypixelConfig"
-import { InstantConnectProxy } from "prismarine-proxy"
 import { Client, PacketMeta } from "minecraft-protocol"
+import { InstantConnectProxy } from "prismarine-proxy"
+import { Module } from "./interfaces/module/Module"
 import { Logger } from "./utils/Logger"
+import * as path from "path"
+import * as fs from "fs"
 
 export class VirtualHypixel {
 
@@ -10,6 +13,8 @@ export class VirtualHypixel {
 
     proxy: InstantConnectProxy | null = null
     packetsStarted: boolean = false
+
+    modules: Module[] = []
 
     start(config: VirtualHypixelConfig) {
         Logger.startup(`Starting VirtualHypixel ${this.version}...`)
@@ -70,6 +75,37 @@ export class VirtualHypixel {
             this.proxy.server?.close()
             this.proxy = null
             Logger.info(`Stopped VirtualHypixel ${this.version}.`)
+        }
+    }
+
+    loadModules() {
+        Logger.info(`Loading modules...`)
+        this.modules = []
+        if (this.config) {
+            if (fs.existsSync(this.config.modules?.path)) {
+                const dirList = fs.readdirSync(this.config.modules?.path)
+                for (const module of dirList) {
+                    if (fs.lstatSync(path.join(this.config.modules?.path, module)).isDirectory()) {
+                        try {
+                            const moduleManifest = require(path.join(this.config.modules?.path, module, "manifest.json"))
+                            const moduleConfig = require(path.join(this.config.modules?.path, module, "config.json"))
+                            const moduleClass = require(path.join(this.config.modules?.path, module, "index.js"))
+                            this.modules.push({
+                                manifest: moduleManifest,
+                                config: moduleConfig,
+                                instance: new moduleClass(this.config.modules.configs[moduleManifest.id])
+                            })
+                            Logger.info(`Loaded module: ${moduleManifest.name} v${moduleManifest.version} by ${moduleManifest.author}!`)
+                        } catch (e) {
+                            Logger.error(`Error loading module ${module}: ${e}`)
+                        }
+                    }
+                }
+            } else {
+                Logger.error(`Module path does not exist!`)
+            }
+        } else {
+            Logger.error(`No config found!`)
         }
     }
 
