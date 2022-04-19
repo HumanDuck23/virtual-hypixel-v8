@@ -1,13 +1,13 @@
 {
-  "v": "0.0.1",
-  "updateName": "Beta Test 0.0.1",
+  "v": "0.1.0",
+  "updateName": "Beta Test 0.1.0",
   "changeLog": {
-    "new": [],
+    "new": ["Proxy Exists"],
     "fix": []
   },
   "files": {
-    "win": "",
-    "mac": "",
-    "linux": ""
+    "win": "https://spaghetcodes.best/virtual-hypixel-api/dl/virtual-hypixel-v8-proxy-win-0.1.0-beta.exe",
+    "mac": "https://spaghetcodes.best/virtual-hypixel-api/dl/virtual-hypixel-v8-proxy-macos-0.1.0-beta",
+    "linux": "https://spaghetcodes.best/virtual-hypixel-api/dl/virtual-hypixel-v8-proxy-linux-0.1.0-beta"
   }
 }
