@@ -33,7 +33,9 @@
     </v-navigation-drawer>
 
     <v-main>
-      <router-view/>
+      <transition name="fade" mode="out-in">
+        <router-view></router-view>
+      </transition>
     </v-main>
   </v-app>
 </template>
@@ -130,5 +132,14 @@ export default {
 
 html {
   overflow-y: auto !important;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+.fade-enter-active, .fave-leave-active {
+  transition: all 0.3s ease
 }
 </style>
