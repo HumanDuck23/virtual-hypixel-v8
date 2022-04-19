@@ -4,7 +4,7 @@
   "description": "Virtual Hypixel is a local proxy to mc.hypixel.net that adds features to your game by modifying / adding / removing packets!",
   "bin": "src/main.js",
   "pkg": {
-    "assets": "node_modules/**/*",
+    "assets": "node_modules/minecraft-packets/minecraft-packets/data/pc/1.8/**/*",
     "outputPath": "dist"
   },
   "keywords": [
