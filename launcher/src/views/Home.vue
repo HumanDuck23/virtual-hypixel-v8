@@ -19,6 +19,19 @@
           </v-row>
         </v-container>
       </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <v-tooltip left>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn @click="randomDuckIcon" icon color="accent" v-bind="attrs" v-on="on">
+              <v-icon>
+                mdi-duck
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>Make the server icon a random picture of a duck</span>
+        </v-tooltip>
+      </v-card-actions>
     </v-card>
   </div>
 </template>
@@ -55,20 +68,38 @@ export default {
         const reader = new FileReader()
         reader.onload = (e) => {
           // resize the image to 64x64
-          const img = new Image()
-          img.onload = () => {
-            const canvas = document.createElement("canvas")
-            const ctx = canvas.getContext("2d")
-            canvas.width = 64
-            canvas.height = 64
-            ctx.drawImage(img, 0, 0, 64, 64)
-            this.serverConfig.favicon = canvas.toDataURL("image/png")
-          }
-          img.src = e.target.result.toString()
+          this.resizeImg(e.target.result.toString()).then(n => { this.serverConfig.favicon = n })
         }
         reader.readAsDataURL(file)
       }
       fileInput.click()
+    },
+
+    randomDuckIcon() {
+      if (window.duckAPI) {
+        window.duckAPI.getDuck()
+          .then(duck => {
+            this.resizeImg(duck).then(n => { this.serverConfig.favicon = n })
+          })
+          .catch(err => {
+            console.error(err)
+          })
+      }
+    },
+
+    resizeImg(base64) {
+      return new Promise(resolve => {
+        const img = new Image()
+        img.onload = () => {
+          const canvas = document.createElement("canvas")
+          const ctx = canvas.getContext("2d")
+          canvas.width = 64
+          canvas.height = 64
+          ctx.drawImage(img, 0, 0, 64, 64)
+          resolve(canvas.toDataURL("image/png"))
+        }
+        img.src = base64
+      })
     }
   },
 
