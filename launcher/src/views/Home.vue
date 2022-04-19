@@ -14,7 +14,7 @@
               <v-text-field outlined prepend-inner-icon="mdi-server" label="Target Server" v-model="serverConfig.target" color="accent" />
             </v-col>
             <v-col cols="12" sm="4" md="4">
-              <v-img style="margin-left: 50%; transform: translate(-50%); margin-top: 8px" :src="serverConfig.favicon" width="128"/>
+              <v-img @click="uploadImage" style="margin-left: 50%; transform: translate(-50%); margin-top: 8px" :src="serverConfig.favicon" width="128"/>
             </v-col>
           </v-row>
         </v-container>
@@ -40,6 +40,35 @@ export default {
   mounted() {
     if (localStorage.getItem("serverConfig")) {
       this.serverConfig = JSON.parse(localStorage.getItem("serverConfig"))
+    }
+  },
+
+  methods: {
+    uploadImage() {
+      // create a new file input dialog for images
+      const fileInput = document.createElement("input")
+      fileInput.type = "file"
+      fileInput.accept = "image/*"
+      fileInput.onchange = () => {
+        const file = fileInput.files[0]
+
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          // resize the image to 64x64
+          const img = new Image()
+          img.onload = () => {
+            const canvas = document.createElement("canvas")
+            const ctx = canvas.getContext("2d")
+            canvas.width = 64
+            canvas.height = 64
+            ctx.drawImage(img, 0, 0, 64, 64)
+            this.serverConfig.favicon = canvas.toDataURL("image/png")
+          }
+          img.src = e.target.result.toString()
+        }
+        reader.readAsDataURL(file)
+      }
+      fileInput.click()
     }
   },
 
