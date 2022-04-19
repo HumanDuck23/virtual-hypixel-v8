@@ -26,7 +26,7 @@ export default {
 
   mounted() {
     this.moduleConfigs = JSON.parse(localStorage.getItem("moduleConfigs")) || {}
-    const modulePath = JSON.parse(localStorage.getItem("settings"))?.modules?.path || ""
+    const modulePath = JSON.parse(localStorage.getItem("settings"))?.modulePath || ""
     if (!modulePath) {
       this.pathSnack = true
     }
