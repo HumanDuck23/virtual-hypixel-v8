@@ -43,6 +43,20 @@ async function createWindow() {
     })
   })
 
+  ipcMain.handle("window", (event, arg) => {
+    if (arg === "close") {
+      win.close()
+    } else if (arg === "minimize") {
+      win.minimize()
+    } else if (arg === "maximize") {
+      if (win.isMaximized()) {
+        win.unmaximize()
+      } else {
+        win.maximize()
+      }
+    }
+  })
+
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)

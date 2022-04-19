@@ -3,9 +3,9 @@
     <v-system-bar app color="primary" class="layout-shadow" style="-webkit-app-region: drag;">
       <v-spacer></v-spacer>
       <div class="mr-n2" style="-webkit-app-region: no-drag;">
-        <v-icon @click="() => null" color="accent">mdi-minus</v-icon>
-        <v-icon @click="() => null" color="accent">mdi-crop-square</v-icon>
-        <v-icon @click="() => null" color="accent">mdi-close</v-icon>
+        <v-icon @click="minimize" color="accent">mdi-minus</v-icon>
+        <v-icon @click="maximize" color="accent">mdi-crop-square</v-icon>
+        <v-icon @click="close" color="accent">mdi-close</v-icon>
       </div>
     </v-system-bar>
 
@@ -77,6 +77,24 @@ export default {
   methods: {
     onWindowResize() {
       this.drawerMini = window.innerWidth < 992
+    },
+
+    minimize() {
+      if (window.windowAPI) {
+        window.windowAPI.minimize()
+      }
+    },
+
+    maximize() {
+      if (window.windowAPI) {
+        window.windowAPI.maximize()
+      }
+    },
+
+    close() {
+      if (window.windowAPI) {
+        window.windowAPI.close()
+      }
     }
   }
 }
