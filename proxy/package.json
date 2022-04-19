@@ -2,6 +2,7 @@
   "name": "virtual-hypixel-v8-proxy",
   "version": "1.0.0",
   "description": "Virtual Hypixel is a local proxy to mc.hypixel.net that adds features to your game by modifying / adding / removing packets!",
+  "bin": "src/main.js",
   "pkg": {
     "assets": "node_modules/**/*",
     "outputPath": "dist"
