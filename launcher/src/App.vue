@@ -9,8 +9,8 @@
       </div>
     </v-system-bar>
 
-    <v-navigation-drawer permanent app color="primary" class="layout-shadow-right">
-      <v-list-item>
+    <v-navigation-drawer permanent app color="primary" class="layout-shadow-right" :mini-variant="drawerMini">
+      <v-list-item v-if="!drawerMini">
         <v-list-item-content>
           <v-list-item-title class="banner-text">
             Virtual<br>
@@ -44,6 +44,7 @@ export default {
   name: "App",
 
   data: () => ({
+    drawerMini: false,
     routes: [
       {
         i: "mdi-server-network",
@@ -67,6 +68,17 @@ export default {
       },
     ]
   }),
+
+  mounted() {
+    this.onWindowResize()
+    window.addEventListener("resize", this.onWindowResize)
+  },
+
+  methods: {
+    onWindowResize() {
+      this.drawerMini = window.innerWidth < 992
+    }
+  }
 }
 </script>
 <style>
