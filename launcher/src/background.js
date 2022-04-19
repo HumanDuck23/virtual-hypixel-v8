@@ -1,8 +1,11 @@
-'use strict'
+"use strict"
 
-import { app, protocol, BrowserWindow } from 'electron'
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
-import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import { app, BrowserWindow, ipcMain, protocol } from "electron"
+import { createProtocol } from "vue-cli-plugin-electron-builder/lib"
+import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer"
+import * as path from "path"
+import axios from "axios"
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -21,8 +24,23 @@ async function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
+      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      preload: path.join(__static, "preload.js")
     }
+  })
+
+  ipcMain.handle("getDuck", () => {
+    return new Promise((resolve, reject) => {
+      axios.get("https://random-d.uk/api/v2/randomimg?type=jpg", { responseType: "arraybuffer" })
+          .then(res => {
+            const img = Buffer.from(res.data, "binary").toString("base64")
+            // add base64 header to img string
+            resolve("data:image/png;base64," + img)
+          })
+          .catch(err => {
+            console.error(err)
+          })
+    })
   })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
