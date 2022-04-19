@@ -91,7 +91,11 @@ export default {
   vertical-align: center;
   color: #FFD166;
   padding: 15px;
-  text-shadow: 0 0 9px #FFD166
+  text-shadow: 0 0 9px #FFD166;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .v-navigation-drawer__border {
