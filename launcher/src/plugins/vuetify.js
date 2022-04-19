@@ -8,16 +8,16 @@ export default new Vuetify({
         dark: true,
         themes: {
             light: {
-                primary: "#4464AD",
+                primary: "#3a3d55",
                 secondary: "#5BC0EB",
                 accent: "#FFD166",
                 background: "#FFFFFF",
             },
             dark: {
-                primary: "#4464AD",
+                primary: "#3a3d55",
                 secondary: "#5BC0EB",
                 accent: "#FFD166",
-                background: "#161925",
+                background: "#272b3e",
             }
         }
     }
