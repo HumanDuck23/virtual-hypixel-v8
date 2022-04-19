@@ -1,41 +1,27 @@
 <template>
   <v-app :style="{background: $vuetify.theme.themes[$vuetify.theme.dark ? 'dark' : 'light'].background}">
-    <v-app-bar
-        app
-        color="primary"
-        dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-            alt="Vuetify Logo"
-            class="shrink mr-2"
-            contain
-            src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-            transition="scale-transition"
-            width="40"
-        />
+    <v-navigation-drawer permanent app color="primary">
+      <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title class="banner-text">
+            Virtual<br>
+            Hypixel
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
 
-        <v-img
-            alt="Vuetify Name"
-            class="shrink mt-1 hidden-sm-and-down"
-            contain
-            min-width="100"
-            src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-            width="100"
-        />
-      </div>
+      <v-list nav dense>
+        <v-list-item v-for="(route, i) in routes" :key="i" color="accent" :to="route.path">
+          <v-list-item-icon>
+            <v-icon v-text="route.i"></v-icon>
+          </v-list-item-icon>
 
-      <v-spacer></v-spacer>
-
-      <v-btn
-          href="https://github.com/vuetifyjs/vuetify/releases/latest"
-          target="_blank"
-          text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
+          <v-list-item-content>
+            <v-list-item-title v-text="route.name"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
 
     <v-main>
       <router-view/>
@@ -49,7 +35,41 @@ export default {
   name: "App",
 
   data: () => ({
-    //
+    routes: [
+      {
+        i: "mdi-server-network",
+        name: "Server",
+        path: "/"
+      },
+      {
+        i: "mdi-package-variant-closed",
+        name: "Modules",
+        path: "/modules"
+      },
+      {
+        i: "mdi-account-box-multiple-outline",
+        name: "Accounts",
+        path: "/accounts"
+      },
+      {
+        i: "mdi-cog-outline",
+        name: "Other Settings",
+        path: "/settings"
+      },
+    ]
   }),
 }
 </script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
+
+.banner-text {
+  font-size: 3.5rem !important;
+  font-family: 'Shadows Into Light', cursive;
+  text-align: center;
+  vertical-align: center;
+  color: #FFD166;
+  padding: 15px;
+  text-shadow: 0 0 9px #FFD166
+}
+</style>
