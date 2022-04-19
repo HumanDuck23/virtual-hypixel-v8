@@ -5,3 +5,4 @@ package-lock.json
 test.*
 api/**/*/*.js
 proxy/**/*/*.js
+vh-config.json
