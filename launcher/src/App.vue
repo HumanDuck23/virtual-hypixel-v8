@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :style="{background: $vuetify.theme.themes[$vuetify.theme.dark ? 'dark' : 'light'].background}">
     <v-app-bar
         app
         color="primary"
