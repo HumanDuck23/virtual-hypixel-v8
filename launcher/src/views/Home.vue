@@ -53,6 +53,33 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="updateDialog" max-width="400">
+      <v-card color="primary">
+        <v-card-title>Update</v-card-title>
+        <v-card-text>
+          It seems you aren't running the newest version! Would you like to update?
+          <v-divider class="ma-5"></v-divider>
+          <div v-if="changelog.new && changelog.new.length > 0">
+            New Features:
+            <ul>
+              <li v-for="n in changelog.new" :key="n">{{ n }}</li>
+            </ul>
+          </div>
+          <div v-if="changelog.fix && changelog.fix.length > 0">
+            Fixes:
+            <ul>
+              <li v-for="n in changelog.fix" :key="n">{{ n }}</li>
+            </ul>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text>Later</v-btn>
+          <v-btn color="accent" @click="downloadBinary" :loading="downloading">Yes</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -74,7 +101,8 @@ export default {
     version: "",
     downloadDialog: false,
     updateDialog: false,
-    downloading: false
+    downloading: false,
+    changelog: {}
   }),
 
   mounted() {
@@ -137,6 +165,15 @@ export default {
             .then(version => {
               if (version !== -1) {
                 this.version = version
+                fetch(config.api + "/latest")
+                  .then(res => res.json())
+                  .then(latest => {
+                    if (latest.v !== version) {
+                      this.changelog = latest.changeLog
+                      console.log(this.changelog)
+                      this.updateDialog = true
+                    }
+                  })
               } else {
                 this.downloadDialog = true
               }
