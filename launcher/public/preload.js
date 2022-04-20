@@ -10,3 +10,7 @@ contextBridge.exposeInMainWorld("windowAPI", {
     close: () => ipcRenderer.invoke("window", "close"),
     folderDialog: () => ipcRenderer.invoke("window", "folderDialog"),
 })
+
+contextBridge.exposeInMainWorld("binaryAPI", {
+    versionCheck: () => ipcRenderer.invoke("binary", "versionCheck"),
+})
