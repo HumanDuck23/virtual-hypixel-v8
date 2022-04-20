@@ -1,5 +1,5 @@
 {
-  "v": "0.1.0",
+  "v": "0.1.0-beta",
   "updateName": "Beta Test 0.1.0",
   "changeLog": {
     "new": ["Proxy Exists"],
