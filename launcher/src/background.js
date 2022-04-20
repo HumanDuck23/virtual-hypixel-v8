@@ -5,6 +5,7 @@ import { createProtocol } from "vue-cli-plugin-electron-builder/lib"
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer"
 import * as path from "path"
 import axios from "axios"
+import * as fs from "fs"
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -63,6 +64,19 @@ async function createWindow() {
               resolve(result.filePaths)
             })
       })
+    }
+  })
+
+  ipcMain.handle("binary", (event, arg) => {
+    const exere = /virtual-hypixel-v8-proxy-(win|linux|macos)-(.*).exe/
+    if (arg === "versionCheck") {
+      for (const file of fs.readdirSync(__dirname)) {
+        if (exere.exec(file)) {
+          // exe found
+          return exere.exec(file)[2]
+        }
+      }
+      return -1
     }
   })
 
