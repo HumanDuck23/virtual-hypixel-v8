@@ -18,7 +18,7 @@
                 <v-card-actions>
                   <v-switch class="mb-n4 ml-2" color="accent" v-model="moduleConfigs[module.manifest.id].enabled"></v-switch>
                   <v-spacer />
-                  <v-btn icon color="accent" class="mb-n3">
+                  <v-btn icon color="accent" class="mb-n3" :to="`/module/${module.manifest.id}`">
                     <v-icon>mdi-cog-outline</v-icon>
                   </v-btn>
                 </v-card-actions>
@@ -69,9 +69,25 @@ export default {
                     enabled: true
                   }
                 }
+                const defaultVal = (type) => {
+                  switch (type) {
+                    case "text":
+                      return ""
+                    case "number":
+                      return 0
+                    case "choice":
+                      return ""
+                    case "list":
+                      return []
+                    case "bool":
+                      return true
+                    case "range":
+                      return [0,5]
+                  }
+                }
                 for (const option of Object.keys(module.config)) {
                   if (this.moduleConfigs[module.manifest.id][option] === undefined) {
-                    this.moduleConfigs[module.manifest.id][option] = ""
+                    this.moduleConfigs[module.manifest.id][option] = defaultVal(module.config[option].type)
                   }
                 }
               }

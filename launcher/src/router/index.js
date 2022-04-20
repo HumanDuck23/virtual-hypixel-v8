@@ -2,6 +2,7 @@ import Vue from "vue"
 import VueRouter from "vue-router"
 import Home from "../views/Home.vue"
 import Modules from "../views/Modules"
+import ModuleSettings from "../views/ModuleSettings"
 import Accounts from "../views/Accounts"
 import Settings from "../views/Settings"
 
@@ -17,6 +18,11 @@ const routes = [
         path: "/modules",
         name: "modules",
         component: Modules
+    },
+    {
+        path: "/module/:id",
+        name: "ModuleSettings",
+        component: ModuleSettings
     },
     {
         path: "/accounts",
