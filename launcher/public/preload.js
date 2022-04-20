@@ -13,4 +13,5 @@ contextBridge.exposeInMainWorld("windowAPI", {
 
 contextBridge.exposeInMainWorld("binaryAPI", {
     versionCheck: () => ipcRenderer.invoke("binary", "versionCheck"),
+    download: (url) => ipcRenderer.invoke("binary", "download", url),
 })
