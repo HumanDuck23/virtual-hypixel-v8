@@ -118,6 +118,25 @@ async function createWindow() {
         }
     })
 
+    ipcMain.handle("module", (event, ...arg) => {
+        if (arg[0] === "getModules") {
+            const dir = fs.readdirSync(arg[1])
+            const list = []
+            for (const module of dir) {
+                const m = {
+                    manifest: {},
+                    config: {}
+                }
+                const moduleManifest = JSON.parse(fs.readFileSync(path.join(arg[1], module, "manifest.json")).toString())
+                const moduleConfig = JSON.parse(fs.readFileSync(path.join(arg[1], module, "config.json")).toString())
+                m.manifest = moduleManifest
+                m.config = moduleConfig
+                list.push(m)
+            }
+            return list
+        }
+    })
+
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
         await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)

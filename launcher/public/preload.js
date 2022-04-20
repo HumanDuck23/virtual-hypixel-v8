@@ -16,3 +16,7 @@ contextBridge.exposeInMainWorld("binaryAPI", {
     download: (url) => ipcRenderer.invoke("binary", "download", url),
     deleteOld: (url) => ipcRenderer.invoke("binary", "deleteOld"),
 })
+
+contextBridge.exposeInMainWorld("moduleAPI", {
+    getModules: (path) => ipcRenderer.invoke("module", "getModules", path),
+})
