@@ -146,37 +146,36 @@ export default {
 
     downloadBinary() {
       if (window.binaryAPI) {
+        const onDownloaded = () => {
+          this.downloading = false
+          this.downloadDialog = false
+          this.versionCheck()
+        }
+        this.downloading = true
         fetch(config.api + "/latest")
           .then(res => res.json())
           .then(res => {
             if (res.files) {
-              this.downloading = true
               const agent = navigator.userAgent.toLowerCase()
               if (agent.includes("windows")) {
                 window.binaryAPI.download(res.files.win)
                   .then((r) => {
                     if (r) {
-                      this.downloading = false
-                      this.downloadDialog = false
-                      this.versionCheck()
+                      onDownloaded()
                     }
                   })
               } else if (agent.includes("mac")) {
                 window.binaryAPI.download(res.files.mac)
                     .then((r) => {
                       if (r) {
-                        this.downloading = false
-                        this.downloadDialog = false
-                        this.versionCheck()
+                        onDownloaded()
                       }
                     })
               } else if (agent.includes("linux")) {
                 window.binaryAPI.download(res.files.linux)
                     .then((r) => {
                       if (r) {
-                        this.downloading = false
-                        this.downloadDialog = false
-                        this.versionCheck()
+                        onDownloaded()
                       }
                     })
               }
