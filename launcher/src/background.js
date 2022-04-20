@@ -106,6 +106,15 @@ async function createWindow() {
                         reject(err)
                     })
             })
+        } else if (arg === "deleteOld") {
+            for (const file of fs.readdirSync(__dirname)) {
+                if (exere.exec(file)) {
+                    // exe found
+                    fs.unlinkSync(path.join(__dirname, file))
+                    return true
+                }
+            }
+            return false
         }
     })
 
