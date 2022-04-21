@@ -10,6 +10,9 @@ import * as fs from "fs"
 import * as stream from "stream"
 import { promisify } from "util"
 
+import { execFile } from "child_process"
+let proxyProcess = null
+
 const finished = promisify(stream.finished)
 
 function downloadFile(fileUrl, outputLocationPath) {
@@ -115,6 +118,28 @@ async function createWindow() {
                 }
             }
             return false
+        } else if (arg[0] === "startProxy") {
+            return new Promise((resolve, reject) => {
+                for (const file of fs.readdirSync(__dirname)) {
+                    if (exere.exec(file)) {
+                        // exe found, write the config and then start the proxy
+                        const config = arg[1]
+                        fs.writeFileSync(path.join(__dirname, "vh-config.json"), JSON.stringify(config))
+                        proxyProcess = execFile(path.join(__dirname, file), (err, stdout, stderr) => {
+                            if (err) {
+                                console.error(err)
+                            }
+                            console.log(stdout)
+                            console.error(stderr)
+                            resolve(true)
+                        })
+                    }
+                }
+            })
+        } else if (arg === "stopProxy") {
+            if (proxyProcess !== null) {
+                proxyProcess.kill()
+            }
         }
     })
 

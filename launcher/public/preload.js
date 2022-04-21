@@ -15,6 +15,8 @@ contextBridge.exposeInMainWorld("binaryAPI", {
     versionCheck: () => ipcRenderer.invoke("binary", "versionCheck"),
     download: (url) => ipcRenderer.invoke("binary", "download", url),
     deleteOld: (url) => ipcRenderer.invoke("binary", "deleteOld"),
+    startProxy: (config) => ipcRenderer.invoke("binary", "startProxy", config),
+    stopProxy: () => ipcRenderer.invoke("binary", "stopProxy"),
 })
 
 contextBridge.exposeInMainWorld("moduleAPI", {

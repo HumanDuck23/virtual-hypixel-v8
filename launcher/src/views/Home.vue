@@ -11,21 +11,26 @@
         <v-container fluid>
           <v-row>
             <v-col cols="12" sm="4" md="4">
-              <v-text-field outlined prepend-inner-icon="mdi-format-list-text" label="MOTD" v-model="serverConfig.motd" color="accent" />
-              <v-text-field outlined prepend-inner-icon="mdi-format-list-text" label="Max Players" v-model="serverConfig.maxPlayers" type="number" color="accent" />
+              <v-text-field outlined prepend-inner-icon="mdi-format-list-text" label="MOTD" v-model="serverConfig.motd"
+                            color="accent"/>
+              <v-text-field outlined prepend-inner-icon="mdi-format-list-text" label="Max Players"
+                            v-model="serverConfig.maxPlayers" type="number" color="accent"/>
             </v-col>
             <v-col cols="12" sm="4" md="4">
-              <v-text-field outlined prepend-inner-icon="mdi-cable-data" label="Port" v-model="serverConfig.port" type="number" color="accent" />
-              <v-text-field outlined prepend-inner-icon="mdi-server" label="Target Server" v-model="serverConfig.target" color="accent" />
+              <v-text-field outlined prepend-inner-icon="mdi-cable-data" label="Port" v-model="serverConfig.port"
+                            type="number" color="accent"/>
+              <v-text-field outlined prepend-inner-icon="mdi-server" label="Target Server" v-model="serverConfig.target"
+                            color="accent"/>
             </v-col>
             <v-col cols="12" sm="4" md="4">
-              <v-img @click="uploadImage" style="margin-left: 50%; transform: translate(-50%); margin-top: 8px" :src="serverConfig.favicon" width="128"/>
+              <v-img @click="uploadImage" style="margin-left: 50%; transform: translate(-50%); margin-top: 8px"
+                     :src="serverConfig.favicon" width="128"/>
             </v-col>
           </v-row>
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-spacer />
+        <v-spacer/>
         <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
             <v-btn @click="randomDuckIcon" icon color="accent" v-bind="attrs" v-on="on">
@@ -39,6 +44,43 @@
       </v-card-actions>
     </v-card>
 
+    <v-card class="ma-5" color="primary">
+      <v-card-text>
+        <v-container fluid>
+          <v-row v-if="!proxy.started" align="center" justify="center">
+            <v-btn color="success" :loading="proxy.loading" @click="startProxy">
+              <v-icon class="mr-2">mdi-rocket-launch-outline</v-icon>
+              Start
+            </v-btn>
+          </v-row>
+          <v-row v-else>
+            <v-col cols="12" sm="4">
+              <v-card color="primary">
+                <v-card-text class="white--text text-center">
+                  <v-icon class="mr-2">mdi-clock-outline</v-icon>
+                  {{ proxy.uptime }}
+                </v-card-text>
+              </v-card>
+            </v-col>
+            <v-col cols="12" sm="4">
+              <v-card color="primary">
+                <v-card-text class="white--text text-center">
+                  localhost:{{ serverConfig.port }}
+                </v-card-text>
+              </v-card>
+            </v-col>
+            <v-col cols="12" sm="4">
+              <v-card color="error" @click="stopProxy">
+                <v-card-text class="white--text text-center">
+                  STOP
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
+    </v-card>
+
     <v-dialog v-model="downloadDialog" max-width="400">
       <v-card color="primary">
         <v-card-title>Download</v-card-title>
@@ -47,7 +89,7 @@
           Alternatively, you can download it yourself and put it in the same folder as the launcher.
         </v-card-text>
         <v-card-actions>
-          <v-spacer />
+          <v-spacer/>
           <v-btn text>Later</v-btn>
           <v-btn color="accent" @click="downloadBinary" :loading="downloading">Yes</v-btn>
         </v-card-actions>
@@ -74,7 +116,7 @@
           </div>
         </v-card-text>
         <v-card-actions>
-          <v-spacer />
+          <v-spacer/>
           <v-btn text>Later</v-btn>
           <v-btn color="accent" @click="deleteOldBinary(); downloadBinary()" :loading="downloading">Yes</v-btn>
         </v-card-actions>
@@ -102,7 +144,14 @@ export default {
     downloadDialog: false,
     updateDialog: false,
     downloading: false,
-    changelog: {}
+    changelog: {},
+
+    proxy: {
+      started: false,
+      startedAt: 0,
+      uptime: "",
+      loading: false
+    }
   }),
 
   mounted() {
@@ -233,6 +282,60 @@ export default {
             console.error(err)
           })
       }
+    },
+
+    startProxy() {
+      if (window.binaryAPI) {
+        this.proxy.loading = true
+        // make the config
+        const accounts = JSON.parse(localStorage.getItem("accounts") || [])
+        const transformedAccounts = {}
+        accounts.forEach(a => {
+          transformedAccounts[a.username] = { email: a.email, password: a.password }
+        })
+        const modulePath = JSON.parse(localStorage.getItem("settings"))?.modulePath || ""
+
+        const config = {
+          server: this.serverConfig,
+          accounts: transformedAccounts,
+          modules: {
+            path: modulePath,
+            configs: JSON.parse(localStorage.getItem("moduleConfigs") || {})
+          }
+        }
+        window.binaryAPI.startProxy(config)
+          .then((e) => {
+            console.log(e)
+            this.proxy.loading = false
+            this.proxy.started = true
+            this.proxy.startedAt = Date.now()
+            const i = setInterval(() => {
+              if (!this.proxy.started) { clearInterval(i) }
+              this.proxy.uptime = this.getTimeSince(this.proxy.startedAt)
+            }, 1000)
+          })
+          .catch(err => {
+            console.error(err)
+            this.proxy.loading = false
+            this.proxy.running = false
+          })
+      }
+    },
+
+    stopProxy() {
+      if (window.binaryAPI) {
+        window.binaryAPI.stopProxy()
+        this.proxy.started = false
+      }
+    },
+
+    getTimeSince(stamp) {
+      // get the time since stamp and return it in hh:mm:ss
+      const diff = Date.now() - stamp
+      const hours = Math.floor(diff / (1000 * 60 * 60))
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+      return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
     }
   },
 
